@@ -30,6 +30,9 @@ jobs:
                   -T target/TrainBook-1.0.0-SNAPSHOT.war \
                   "http://${{ secrets.TOMCAT_HOST }}:8080/manager/text/deploy?path=/TrainBook&update=true"
 
+
+                  
+
         
       
  
