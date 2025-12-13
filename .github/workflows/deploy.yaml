@@ -1,66 +1,33 @@
-name: Build and Deploy train-ticket-reservation
-
-on:
+name: ci/cd pipeline to deploy to tomcat
+on: 
   push:
-    branches:
-      - master
-  workflow_dispatch:
-
+    branches: master
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: ☕ Set up Java
-        uses: actions/setup-java@v4
+      - name: checkout code
+        uses: actions/checkout@v3
+      
+      - name: set-up jdk
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '17'   # Updated Java version
+      - name: validate with maven
+        run: mvn validate
+      - name: compile with maven
+        run: mvn compile
+      - name: test with maven
+        run: mvn test
+      - name: package with maven
+        run: mvn package
 
-      - name: 🔨 Build with Maven
-        run: mvn clean package -DskipTests
-
-      - name: 🗂 Find WAR file
-        run: echo "WAR_FILE=$(ls target/*.war | head -n 1)" >> $GITHUB_ENV
-
-      - name: ⬆ Upload WAR artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: war-file
-          path: ${{ env.WAR_FILE }}
-
-      
-
-  deploy-dev:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: war-file
-
-      - name: 🚀 Deploy to DEV
-        env:
-          URL: ${{ secrets.TOMCAT_URL_DEV }}
-          USER: ${{ secrets.TOMCAT_USER_DEV }}
-          PASS: ${{ secrets.TOMCAT_PASS_DEV }}
+      - name: verify WAR file
+        run: ls -lh target/
+        #Deploy WAR to Tomcat  
+      - name: Deploy to tomcat
         run: |
-          WAR_FILE=$(ls *.war | head -n 1)
-          echo "Deploying $WAR_FILE to DEV ($URL)"
-
-          echo "📌 Checking Tomcat Manager access..."
-          curl -v -u "$USER:$PASS" "$URL/list"
-
-          echo "📌 Deploying WAR file..."
-          curl -v -u "$USER:$PASS" --fail --show-error -T "$WAR_FILE" \
-            "$URL/deploy?path=/train-ticket-reservation&update=true"
-
-            
-
-
-
-            
+               curl -v -u ${{secrets.TOMCAT_USER}}:${{secrets.TOMCAT_PASSWORD}} \
+                  -T target/TrainBook-1.0.0-SNAPSHOT.war \
+                  "http://${{secrets.TOMCAT_HOST}}:8080/manager/text/deploy?path=/TrainBook&update=true"
