@@ -1,38 +1,33 @@
-name: ci/cd pipeline to deploy to tomcat
+name: CI/CD pipeline to deploy to Tomcat
+
 on:
- push:
-   branches: master
+  push:
+    branches:
+      - master
+
 jobs:
- build-deploy:
-  runs-on: ubuntu-latest
-  steps:
-      - name: checkout code
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v3
-      - name: set-up jdk
+
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'  
-      - name: maven validate
-        run: mvn validate 
-      - name: maven compile
-        run: mvn compile
-      - name: maven test
-        run: mvn test
-      - name: maven package
-        run: mvn package
-      - name: varify war file
-        run: ls -lh target/
-         # Deploy to Tomcat
-      - name: deploy war to tomcat
-        run: | 
-                curl -v -u ${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }} \
-                  -T target/TrainBook-1.0.0-SNAPSHOT.war \
-                  "http://${{ secrets.TOMCAT_HOST }}:8080/manager/text/deploy?path=/TrainBook&update=true"
+          distribution: temurin
+          java-version: '17'
 
+      - name: Build WAR with Maven
+        run: mvn clean package
 
-                  
+      - name: Verify WAR file
+        run: ls -lh target/TrainBook-1.0.0-SNAPSHOT.war
 
-        
-      
- 
+      - name: Deploy WAR to Tomcat
+        run: |
+          curl --fail --verbose \
+            --user "${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }}" \
+            --upload-file target/TrainBook-1.0.0-SNAPSHOT.war \
+            "http://${{ secrets.TOMCAT_HOST }}:8080/manager/text/deploy?path=/TrainBook&update=true"
