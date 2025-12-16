@@ -32,14 +32,6 @@ jobs:
           name: war-file
           path: ${{ env.WAR_FILE }}
 
-  deploy-dev:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: war-file
       - name: SonarQube Analysis
         run: |
          mvn sonar:sonar \
