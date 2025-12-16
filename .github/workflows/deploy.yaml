@@ -40,6 +40,12 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: war-file
+      - name: SonarQube Analysis
+        run: |
+         mvn sonar:sonar \
+         -Dsonar.projectKey=train-ticket-reservation \
+         -Dsonar.host.url=${{ secrets.SONAR_HOST }} \
+         -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       
 
