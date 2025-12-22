@@ -46,7 +46,7 @@ jobs:
 
           echo "Deploying WAR file..."
           curl -v -u "$USER:$PASS" --fail --show-error -T "$WAR_FILE" \
-            "$URL/deploy?path=/train-ticket-reservation&update=true"
+            "$URL/deploy?path=/train-ticket-reservation&update=true"      
 
 
 
