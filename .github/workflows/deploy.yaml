@@ -91,9 +91,9 @@ jobs:
 
       - name:  Deploy to PRE-PROD
         env:
-          URL: ${{ secrets.TOMCAT_URL_PRE-PROD }}
-          USER: ${{ secrets.TOMCAT_USER_PRE-PROD }}
-          PASS: ${{ secrets.TOMCAT_PASS_PRE-PROD }}
+          URL: ${{ secrets.TOMCAT_URL_PRE_PROD }}
+          USER: ${{ secrets.TOMCAT_USER_PRE_PROD }}
+          PASS: ${{ secrets.TOMCAT_PASS_PRE_PROD }}
         run: |
           WAR_FILE=$(ls *.war | head -n 1)
           echo "Deploying $WAR_FILE to PRE-PROD ($URL)"
