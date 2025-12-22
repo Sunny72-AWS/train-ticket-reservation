@@ -31,6 +31,14 @@ jobs:
         with:
           name: war-file
           path: ${{ env.WAR_FILE }}
+  deploy-dev:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: war-file
 
       - name:  Deploy to DEV
         env:
@@ -46,7 +54,8 @@ jobs:
 
           echo "Deploying WAR file..."
           curl -v -u "$USER:$PASS" --fail --show-error -T "$WAR_FILE" \
-            "$URL/deploy?path=/train-ticket-reservation&update=true"              
+            "$URL/deploy?path=/train-ticket-reservation&update=true"
+            
 
 
 
