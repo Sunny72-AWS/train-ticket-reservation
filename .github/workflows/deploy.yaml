@@ -48,7 +48,7 @@ jobs:
           EOF
 
       - name: Upload Artifact to Nexus
-        run: mvn deploy -DaltDeploymentRepository=nexus::default::${{ secrets.NEXUS_REPO_URL }}
+        run: mvn deploy -DaltDeploymentRepository=nexus::default::${{ secrets.NEXUS_REPO_URL }}   
 
       
 
