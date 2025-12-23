@@ -1,4 +1,4 @@
-name: Build and Deploy nexus artifact
+name: Build and Deploy artifact to nexus
 
 on:
   push:
