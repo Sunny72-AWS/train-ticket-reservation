@@ -1,14 +1,15 @@
-# Use an OpenJDK base image
-FROM openjdk:17-jdk-alpine
+# Use official Apache Tomcat base image with JDK 17
+FROM tomcat:9.0-jdk17
 
-# Set working directory
-WORKDIR /app
+# Remove default Tomcat apps (optional, for a clean slate)
+RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copy your built JAR/WAR file into container
-COPY target/train-ticket-reservation.jar app.jar
+# Copy your WAR file into the Tomcat webapps directory
+# Rename it to ROOT.war for root path deployment
+COPY target/TrainBook-1.0.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
-# Expose port your app runs on (e.g. 8080)
+# Expose default Tomcat port
 EXPOSE 8080
 
-# Run the app
-ENTRYPOINT ["java","-jar","app.jar"]
+# Start Tomcat (default CMD in base image)
+CMD ["catalina.sh", "run"]
